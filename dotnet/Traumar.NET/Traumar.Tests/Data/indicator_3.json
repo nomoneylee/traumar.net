@@ -1,0 +1,40 @@
+{
+  "test_name": "indicator_3",
+  "input": [
+    {
+      "id": 1,
+      "level": "I",
+      "type": "Blunt",
+      "ps": 0.9
+    },
+    {
+      "id": 2,
+      "level": "I",
+      "type": "Penetrating",
+      "ps": 0.8
+    },
+    {
+      "id": 3,
+      "level": "II",
+      "type": "Blunt"
+    },
+    {
+      "id": 4,
+      "level": "II",
+      "type": "Burn",
+      "ps": 0.7
+    },
+    {
+      "id": 5,
+      "level": "III",
+      "type": "Blunt",
+      "ps": 0.6
+    }
+  ],
+  "expected": {
+    "data": "population/sample",
+    "numerator_3": 3,
+    "denominator_3": 4,
+    "seqic_3": 0.75
+  }
+}

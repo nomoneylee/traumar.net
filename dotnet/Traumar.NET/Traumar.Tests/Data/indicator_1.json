@@ -1,0 +1,72 @@
+{
+  "test_name": "indicator_1",
+  "input": [
+    {
+      "incident_id": 1,
+      "activation_level": "Level 1",
+      "provider_type": "Surgery/Trauma",
+      "trauma_level": "I",
+      "response_minutes": 10,
+      "provider": "Dr A"
+    },
+    {
+      "incident_id": 2,
+      "activation_level": "Level 1",
+      "provider_type": "Surgery/Trauma",
+      "trauma_level": "II",
+      "response_minutes": 20,
+      "provider": "Dr B"
+    },
+    {
+      "incident_id": 3,
+      "activation_level": "Level 1",
+      "provider_type": "Surgery/Trauma",
+      "trauma_level": "III",
+      "response_minutes": 25,
+      "provider": "Dr C"
+    },
+    {
+      "incident_id": 4,
+      "activation_level": "Level 1",
+      "provider_type": "Surgery/Trauma",
+      "trauma_level": "III",
+      "provider": "Dr D"
+    },
+    {
+      "incident_id": 5,
+      "activation_level": "Level 1",
+      "provider_type": "Surgery/Trauma",
+      "trauma_level": "II",
+      "response_minutes": 40,
+      "provider": "Dr E"
+    },
+    {
+      "incident_id": 6,
+      "activation_level": "Level 1",
+      "provider_type": "Surgery/Trauma",
+      "trauma_level": "I",
+      "provider": "Dr F"
+    }
+  ],
+  "expected": {
+    "data": "population/sample",
+    "numerator_1a": 1,
+    "denominator_1a": 3,
+    "seqic_1a": 0.3333,
+    "numerator_1b": 3,
+    "denominator_1b": 4,
+    "seqic_1b": 0.75,
+    "numerator_1c": 2,
+    "denominator_1c": 6,
+    "seqic_1c": 0.3333,
+    "numerator_1d": 0,
+    "denominator_1d": 4,
+    "seqic_1d": 0,
+    "numerator_1e": 2,
+    "denominator_1e": 4,
+    "seqic_1e": 0.5,
+    "numerator_1f": 2,
+    "denominator_1f": 6,
+    "seqic_1f": 0.3333
+  }
+}

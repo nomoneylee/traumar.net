@@ -1,0 +1,34 @@
+{
+  "test_name": "indicator_2",
+  "input": [
+    {
+      "unique_incident_id": 1,
+      "trauma_level": "I",
+      "incident_date_time": "2023-01-01 10:00:00"
+    },
+    {
+      "unique_incident_id": 2,
+      "trauma_level": "I"
+    },
+    {
+      "unique_incident_id": 3,
+      "trauma_level": "II",
+      "incident_date_time": "2023-01-01 11:00:00"
+    },
+    {
+      "unique_incident_id": 4,
+      "trauma_level": "II",
+      "incident_date_time": "2023-01-01 12:00:00"
+    },
+    {
+      "unique_incident_id": 5,
+      "trauma_level": "III"
+    }
+  ],
+  "expected": {
+    "data": "population/sample",
+    "numerator_2": 2,
+    "denominator_2": 5,
+    "seqic_2": 0.4
+  }
+}

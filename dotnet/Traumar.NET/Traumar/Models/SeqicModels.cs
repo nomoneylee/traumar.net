@@ -69,9 +69,16 @@ namespace Traumar.Models
 
     public class SeqicRate
     {
+        private double? _rate;
         public int Numerator { get; set; }
         public int Denominator { get; set; }
-        public double? Rate => Denominator > 0 ? (double)Numerator / Denominator : (double?)null;
+        public double? Rate
+        {
+            get => _rate ?? (Denominator > 0 ? (double)Numerator / Denominator : (double?)null);
+            set => _rate = value;
+        }
+        public double? LowerCi { get; set; }
+        public double? UpperCi { get; set; }
     }
 
     // Indicator 1
@@ -292,5 +299,53 @@ namespace Traumar.Models
     public class Indicator13Result 
     {
         public SeqicRate Indicator13 { get; set; }
+    }
+
+    /// <summary>
+    /// 指定信賴區間的計算方法。
+    /// </summary>
+    public enum CiMethod
+    {
+        None = 0,
+        Wilson = 1,
+        ClopperPearson = 2
+    }
+
+    /// <summary>
+    /// SEQIC 指標的計算結果基類。
+    /// </summary>
+    public class SeqicUniversalInput
+    {
+        public string UniqueIncidentId { get; set; }
+        public TraumaTeamActivationLevel ActivationLevel { get; set; }
+        public PhysicianServiceType ServiceType { get; set; }
+        public TraumaLevel Level { get; set; }
+        public double? ResponseTime { get; set; }
+        public string ActivationProvider { get; set; }
+        public DateTime? IncidentTime { get; set; }
+        public TraumaType TraumaType { get; set; }
+        public double? ProbabilityOfSurvival { get; set; }
+        public Disposition EdDisposition { get; set; }
+        public Disposition HospitalDisposition { get; set; }
+        public double? EdLos { get; set; }
+        public double? HospitalLos { get; set; }
+        public YesNo? Autopsy { get; set; }
+        public double? BloodAlcoholContent { get; set; }
+        public string DrugScreen { get; set; }
+        public YesNo TransferOutIndicator { get; set; }
+        public YesNo ReceivingIndicator { get; set; }
+        public bool LowGcsIndicator { get; set; }
+        public double? TimeFromInjuryToArrival { get; set; }
+        public YesNo MortalityIndicator { get; set; }
+        public RiskGroup RiskGroup { get; set; }
+        public string TransportMethod { get; set; }
+        public YesNo TraumaTeamActivated { get; set; }
+        public double? EdDecisionLos { get; set; }
+        public double? EdDecisionDischargeLos { get; set; }
+        public int? Iss { get; set; }
+        public YesNo? Nfti { get; set; }
+        public double? ValidityScore { get; set; }
+        public string FacilityId { get; set; }
+        public double? DataEntryTime { get; set; }
     }
 }

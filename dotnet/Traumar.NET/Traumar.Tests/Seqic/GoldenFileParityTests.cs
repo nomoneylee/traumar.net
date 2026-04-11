@@ -377,7 +377,7 @@ namespace Traumar.Tests.Seqic
                 UniqueIncidentId = u.unique_incident_id,
                 Level = ParseEnum<TraumaLevel>(u.level),
                 TransferOutIndicator = ParseEnum<YesNo>(u.transfer_out),
-                ActivationLevel = ParseEnum<TraumaTeamActivationLevel>(u.activation_level),
+                ActivationLevel = u.activation_level,
                 Iss = u.iss,
                 Nfti = null
             });

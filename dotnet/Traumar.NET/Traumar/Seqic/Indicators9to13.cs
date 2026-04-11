@@ -84,9 +84,9 @@ namespace Traumar.Seqic
 
             foreach (var r in prep)
             {
-                // 注意：R 語言使用的是 grepl("level 1", ..., ignore.case = TRUE)
-                // 在我們的 Enum 解析中，"Level 1" 會對應到 Level1。
-                bool isFullActivation = r.ActivationLevel == TraumaTeamActivationLevel.Level1;
+                // 使用與 R 相同的大小寫不敏感字串包含檢查 (grepl("level 1", ..., ignore.case = TRUE))
+                bool isFullActivation = r.ActivationLevel != null && 
+                                        r.ActivationLevel.IndexOf("level 1", StringComparison.OrdinalIgnoreCase) >= 0;
                 bool isLimitedActivation = !isFullActivation;
 
                 bool majorTrauma = false;

@@ -33,11 +33,11 @@ namespace Traumar.Tests.Seqic
             var data = new List<Indicator10Input>
             {
                 // Undertriage: Limited activation, but major trauma
-                new Indicator10Input { UniqueIncidentId = "1", Level = TraumaLevel.I, TransferOutIndicator = YesNo.No, ActivationLevel = TraumaTeamActivationLevel.Level2, Iss = 25 },
+                new Indicator10Input { UniqueIncidentId = "1", Level = TraumaLevel.I, TransferOutIndicator = YesNo.No, ActivationLevel = "Level 2", Iss = 25 },
                 // Overtriage: Full activation, but minor trauma
-                new Indicator10Input { UniqueIncidentId = "2", Level = TraumaLevel.I, TransferOutIndicator = YesNo.No, ActivationLevel = TraumaTeamActivationLevel.Level1, Iss = 5 },
+                new Indicator10Input { UniqueIncidentId = "2", Level = TraumaLevel.I, TransferOutIndicator = YesNo.No, ActivationLevel = "Level 1", Iss = 5 },
                 // Appropriate: Full activation, major trauma
-                new Indicator10Input { UniqueIncidentId = "3", Level = TraumaLevel.I, TransferOutIndicator = YesNo.No, ActivationLevel = TraumaTeamActivationLevel.Level1, Iss = 25 }
+                new Indicator10Input { UniqueIncidentId = "3", Level = TraumaLevel.I, TransferOutIndicator = YesNo.No, ActivationLevel = "Level 1", Iss = 25 }
             };
 
             var res = Indicators9to13.CalculateIndicator10(data);

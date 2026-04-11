@@ -246,7 +246,7 @@ namespace Traumar.Models
         public string UniqueIncidentId { get; set; }
         public TraumaLevel Level { get; set; }
         public YesNo TransferOutIndicator { get; set; }
-        public TraumaTeamActivationLevel ActivationLevel { get; set; }
+        public string ActivationLevel { get; set; }
         public int? Iss { get; set; }
         public YesNo? Nfti { get; set; }
     }

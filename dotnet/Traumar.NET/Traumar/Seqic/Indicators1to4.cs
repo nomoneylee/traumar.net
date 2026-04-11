@@ -2,12 +2,31 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Traumar.Models;
+using Traumar.Core;
 
 namespace Traumar.Seqic
 {
     public static class Indicators1to4
     {
-        public static Indicator1Result CalculateIndicator1(IEnumerable<Indicator1Input> data, IEnumerable<TraumaLevel> includedLevels = null)
+        private static SeqicRate CreateRate(int num, int denom, CiMethod ciMethod)
+        {
+            var result = new SeqicRate { Numerator = num, Denominator = denom };
+            if (ciMethod == CiMethod.Wilson)
+            {
+                var (lower, upper) = StatHelper.CalculateWilsonInterval(num, denom);
+                result.LowerCi = lower;
+                result.UpperCi = upper;
+            }
+            else if (ciMethod == CiMethod.ClopperPearson)
+            {
+                var (lower, upper) = StatHelper.CalculateClopperPearsonInterval(num, denom);
+                result.LowerCi = lower;
+                result.UpperCi = upper;
+            }
+            return result;
+        }
+
+        public static Indicator1Result CalculateIndicator1(IEnumerable<Indicator1Input> data, IEnumerable<TraumaLevel> includedLevels = null, CiMethod ciMethod = CiMethod.None)
         {
             includedLevels = includedLevels ?? new[] { TraumaLevel.I, TraumaLevel.II, TraumaLevel.III, TraumaLevel.IV };
             var dataList = data.ToList();
@@ -86,16 +105,16 @@ namespace Traumar.Seqic
 
             return new Indicator1Result
             {
-                Indicator1A = new SeqicRate { Numerator = aNum, Denominator = aDenom },
-                Indicator1B = new SeqicRate { Numerator = bNum, Denominator = bDenom },
-                Indicator1C = new SeqicRate { Numerator = cNum, Denominator = cDenom },
-                Indicator1D = new SeqicRate { Numerator = dNum, Denominator = deDenom },
-                Indicator1E = new SeqicRate { Numerator = eNum, Denominator = deDenom },
-                Indicator1F = new SeqicRate { Numerator = fNum, Denominator = fDenom }
+                Indicator1A = CreateRate(aNum, aDenom, ciMethod),
+                Indicator1B = CreateRate(bNum, bDenom, ciMethod),
+                Indicator1C = CreateRate(cNum, cDenom, ciMethod),
+                Indicator1D = CreateRate(dNum, deDenom, ciMethod),
+                Indicator1E = CreateRate(eNum, deDenom, ciMethod),
+                Indicator1F = CreateRate(fNum, fDenom, ciMethod)
             };
         }
 
-        public static Indicator2Result CalculateIndicator2(IEnumerable<Indicator2Input> data, IEnumerable<TraumaLevel> includedLevels = null)
+        public static Indicator2Result CalculateIndicator2(IEnumerable<Indicator2Input> data, IEnumerable<TraumaLevel> includedLevels = null, CiMethod ciMethod = CiMethod.None)
         {
             includedLevels = includedLevels ?? new[] { TraumaLevel.I, TraumaLevel.II, TraumaLevel.III, TraumaLevel.IV };
             var validLevelsHashSet = new HashSet<TraumaLevel>(includedLevels);
@@ -108,15 +127,11 @@ namespace Traumar.Seqic
 
             return new Indicator2Result
             {
-                Indicator2 = new SeqicRate
-                {
-                    Denominator = distinctIncidents.Count,
-                    Numerator = distinctIncidents.Count(x => !x.IncidentTime.HasValue)
-                }
+                Indicator2 = CreateRate(distinctIncidents.Count(x => !x.IncidentTime.HasValue), distinctIncidents.Count, ciMethod)
             };
         }
 
-        public static Indicator3Result CalculateIndicator3(IEnumerable<Indicator3Input> data, IEnumerable<TraumaLevel> includedLevels = null)
+        public static Indicator3Result CalculateIndicator3(IEnumerable<Indicator3Input> data, IEnumerable<TraumaLevel> includedLevels = null, CiMethod ciMethod = CiMethod.None)
         {
             includedLevels = includedLevels ?? new[] { TraumaLevel.I, TraumaLevel.II, TraumaLevel.III, TraumaLevel.IV };
             var validLevelsHashSet = new HashSet<TraumaLevel>(includedLevels);
@@ -129,15 +144,11 @@ namespace Traumar.Seqic
 
             return new Indicator3Result
             {
-                Indicator3 = new SeqicRate
-                {
-                    Denominator = distinctIncidents.Count,
-                    Numerator = distinctIncidents.Count(x => x.ProbabilityOfSurvival.HasValue)
-                }
+                Indicator3 = CreateRate(distinctIncidents.Count(x => x.ProbabilityOfSurvival.HasValue), distinctIncidents.Count, ciMethod)
             };
         }
 
-        public static Indicator4Result CalculateIndicator4(IEnumerable<Indicator4Input> data, IEnumerable<TraumaLevel> includedLevels = null)
+        public static Indicator4Result CalculateIndicator4(IEnumerable<Indicator4Input> data, IEnumerable<TraumaLevel> includedLevels = null, CiMethod ciMethod = CiMethod.None)
         {
             includedLevels = includedLevels ?? new[] { TraumaLevel.I, TraumaLevel.II, TraumaLevel.III, TraumaLevel.IV };
             var validLevelsHashSet = new HashSet<TraumaLevel>(includedLevels);
@@ -159,16 +170,8 @@ namespace Traumar.Seqic
 
             return new Indicator4Result
             {
-                Indicator4A = new SeqicRate
-                {
-                    Denominator = filter4a.Count,
-                    Numerator = filter4a.Count(x => x.Autopsy == YesNo.Yes)
-                },
-                Indicator4B = new SeqicRate
-                {
-                    Denominator = filter4b.Count,
-                    Numerator = filter4b.Count(x => x.Autopsy != YesNo.Yes)
-                }
+                Indicator4A = CreateRate(filter4a.Count(x => x.Autopsy == YesNo.Yes), filter4a.Count, ciMethod),
+                Indicator4B = CreateRate(filter4b.Count(x => x.Autopsy != YesNo.Yes), filter4b.Count, ciMethod)
             };
         }
     }

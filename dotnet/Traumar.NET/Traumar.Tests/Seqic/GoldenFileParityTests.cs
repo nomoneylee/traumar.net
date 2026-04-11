@@ -464,6 +464,15 @@ namespace Traumar.Tests.Seqic
             }
 
             string cleanValue = value.Replace(" ", "").Replace("/", "");
+            if (cleanValue.Equals("True", StringComparison.OrdinalIgnoreCase))
+            {
+                if (typeof(T) == typeof(YesNo)) return (T)(object)YesNo.Yes;
+            }
+            if (cleanValue.Equals("False", StringComparison.OrdinalIgnoreCase))
+            {
+                if (typeof(T) == typeof(YesNo)) return (T)(object)YesNo.No;
+            }
+
             if (Enum.TryParse<T>(cleanValue, true, out T result))
                 return result;
 

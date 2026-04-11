@@ -13,3 +13,4 @@ docs
 [Oo]bj/
 *.user
 *.suo
+.gemini/

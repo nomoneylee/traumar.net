@@ -261,6 +261,54 @@ rm_bin_summary(
 #> #   bootstrap_RMM <dbl>, bootstrap_RMM_UL <dbl>, bootstrap_CI <dbl>
 ```
 
+## R 與 .NET 版本數值一致性測試 (Parity Testing)
+
+為了確保 .NET 版本與原始 R 版本的計算邏輯完全一致，本專案採用 **Golden File (黃金檔案)** 測試機制。Golden File 包含了從 R 版本產出的輸入資料以及該資料對應的預期結果（預期結果皆由 R 版本計算產生）。
+
+### 如何產出 Golden File
+
+Golden File 存放於 `tests/golden_files` 目錄下。若需要更新或重新產生測試資料，請依照以下步驟：
+
+1.  確保您的環境已安裝 R 語言以及 `{traumar}` 套件。
+2.  在專案根目錄或 R 主控台中執行 `tests/generate_golden_files.R` 腳本：
+    ```r
+    source("tests/generate_golden_files.R")
+    ```
+3.  該腳本會使用固定種子 (Seed) 產生隨機測試案例，並呼叫 R 版本的所有績效指標函數。
+4.  結果將以 JSON 格式儲存，包含 `input` (原始輸入資料) 與 `expected_wilson` / `expected_cp` (預期結果)。
+
+### 如何執行一致性測試 (.NET 端)
+
+1.  開啟 `dotnet/Traumar.NET/Traumar.NET.sln` 解決方案。
+2.  在 **Test Explorer** 中找到 `Traumar.Tests` 專案。
+3.  執行 `GoldenFileParityTests.cs` 中的測試案例。
+4.  測試機制會自動載入 JSON 檔案並執行以下邏輯：
+    - 將 JSON 輸入資料轉換為 .NET 強型別模型。
+    - 呼叫 .NET 版的計算核心。
+    - 比對 .NET 計算結果與 JSON 中的預期結果（分子、分母、比例及 95% 信賴區間）。
+    - 容許因浮點數運算產生的極微小誤差 (通常小於 $10^{-8}$)。
+
+### 如何查看 R 版本的結果
+
+如果您想知道 R 版本的計算結果作為比對基準，有以下幾種方式：
+
+1.  **直接查看 Golden File (JSON)**：
+    - 開啟 `tests/golden_files/indicator_XX.json`。
+    - 檔案中的 `expected_wilson` 或 `expected_cp` 區塊即為 R 版本在同一組隨機輸入 (`input`) 下產出的**標準答案**。
+2.  **執行 R 端的單元測試**：
+    - 在 R 環境中執行 `devtools::test()` 或在終端機執行：
+      ```bash
+      Rscript tests/testthat.R
+      ```
+    - 這會驗證 R 版本內部的邏輯是否正確。
+3.  **手動執行 R 腳本檢查**：
+    - 您可以參考 `README.md` 前半部分的 R 範例程式碼，在 R Console 中直接貼上執行，即可即時看到 R 的輸出結果。
+
+### 比對機制說明
+
+*   **R 是基準 (Ground Truth)**：在一致性測試中，我們視 R 版本的輸出為絕對正確的「黃金標準」。
+*   **一致性驗證**：.NET 測試專案的目標是證明其運算能夠產出與 JSON 中 `expected_*` 區塊**完全相同**的數值。若 .NET 測試通過，代表兩者邏輯在數值上是等價的。
+
 ## 行為準則
 
 請注意，traumar 專案發布時附有 [貢獻者行為準則](https://bemts-hhs.github.io/traumar/CODE_OF_CONDUCT.html)。參與本專案即代表您同意遵守其條款。

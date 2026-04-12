@@ -243,7 +243,7 @@ namespace Traumar.Tests.Seqic
                 TransferOutIndicator = ParseEnum<YesNo>(u.transfer_out),
                 ReceivingIndicator = ParseEnum<YesNo>(u.receiving),
                 LowGcsIndicator = u.low_gcs,
-                TimeFromInjuryToArrival = u.injury_to_arrival ?? 0
+                TimeFromInjuryToArrival = u.injury_to_arrival
             });
 
             var result = Indicators5to8.CalculateIndicator6(input, ciMethod: method);
@@ -264,7 +264,7 @@ namespace Traumar.Tests.Seqic
                 UniqueIncidentId = u.unique_incident_id,
                 Level = ParseEnum<TraumaLevel>(u.level),
                 TransferOutIndicator = ParseEnum<YesNo>(u.transfer_out),
-                TimeFromInjuryToArrival = u.injury_to_arrival ?? 0
+                TimeFromInjuryToArrival = u.injury_to_arrival
             });
 
             var result = Indicators5to8.CalculateIndicator7(input, ciMethod: method);
@@ -403,8 +403,8 @@ namespace Traumar.Tests.Seqic
                 Level = ParseEnum<TraumaLevel>(u.level),
                 TransferOutIndicator = ParseEnum<YesNo>(u.transfer_out),
                 ReceivingIndicator = ParseEnum<YesNo>(u.receiving),
-                Iss = u.iss ?? 0,
-                EdLos = u.ed_los ?? 0
+                Iss = u.iss,
+                EdLos = u.ed_los
             });
 
             var result = Indicators9to13.CalculateIndicator11(input, ciMethod: method);
@@ -425,7 +425,7 @@ namespace Traumar.Tests.Seqic
                 UniqueIncidentId = u.unique_incident_id,
                 Level = ParseEnum<TraumaLevel>(u.level),
                 FacilityId = u.facility_id,
-                DataEntryTime = u.data_entry_time ?? 0
+                DataEntryTime = u.data_entry_time
             });
 
             var result = Indicators9to13.CalculateIndicator12(input, ciMethod: method);
@@ -445,7 +445,7 @@ namespace Traumar.Tests.Seqic
             {
                 UniqueIncidentId = u.unique_incident_id,
                 Level = ParseEnum<TraumaLevel>(u.level),
-                ValidityScore = u.validity_score ?? 0
+                ValidityScore = u.validity_score
             });
 
             var result = Indicators9to13.CalculateIndicator13(input, ciMethod: method);

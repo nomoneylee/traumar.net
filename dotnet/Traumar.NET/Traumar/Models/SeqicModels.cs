@@ -172,7 +172,7 @@ namespace Traumar.Models
         public YesNo TransferOutIndicator { get; set; }
         public YesNo ReceivingIndicator { get; set; }
         public bool LowGcsIndicator { get; set; }
-        public double TimeFromInjuryToArrival { get; set; }
+        public double? TimeFromInjuryToArrival { get; set; }
     }
 
     public class Indicator6Result
@@ -186,7 +186,7 @@ namespace Traumar.Models
         public string UniqueIncidentId { get; set; }
         public TraumaLevel Level { get; set; }
         public YesNo TransferOutIndicator { get; set; }
-        public double TimeFromInjuryToArrival { get; set; }
+        public double? TimeFromInjuryToArrival { get; set; }
     }
 
     public class Indicator7Result
@@ -265,8 +265,8 @@ namespace Traumar.Models
         public TraumaLevel Level { get; set; }
         public YesNo TransferOutIndicator { get; set; }
         public YesNo ReceivingIndicator { get; set; }
-        public int Iss { get; set; }
-        public double EdLos { get; set; }
+        public int? Iss { get; set; }
+        public double? EdLos { get; set; }
     }
 
     public class Indicator11Result 
@@ -280,7 +280,7 @@ namespace Traumar.Models
         public string UniqueIncidentId { get; set; }
         public TraumaLevel Level { get; set; }
         public string FacilityId { get; set; }
-        public double DataEntryTime { get; set; }
+        public double? DataEntryTime { get; set; }
     }
 
     public class Indicator12Result 
@@ -293,7 +293,7 @@ namespace Traumar.Models
     {
         public string UniqueIncidentId { get; set; }
         public TraumaLevel Level { get; set; }
-        public double ValidityScore { get; set; }
+        public double? ValidityScore { get; set; }
     }
 
     public class Indicator13Result 

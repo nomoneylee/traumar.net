@@ -26,7 +26,7 @@ for (f in r_files) try(source(f, local = FALSE), silent = TRUE)
 for (f in r_files) source(f, local = FALSE)
 
 # 設定隨機種子確保可重複性
-set.seed(42)
+set.seed(99999)
 
 # 建立輸出目錄
 dir.create("tests/golden_files", showWarnings = FALSE, recursive = TRUE)
@@ -92,7 +92,7 @@ generate_universal_data <- function(n = 1000) {
 for (i in 1:13) {
   message(sprintf("Processing Indicator %02d...", i))
   
-  df <- generate_universal_data(2000)
+  df <- generate_universal_data(50000)
   
   # 定義呼叫函數
   call_indicator <- function(data, ci_method) {

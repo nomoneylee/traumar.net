@@ -92,22 +92,19 @@ namespace Traumar.Seqic
                 bool majorTrauma = false;
                 bool minorTrauma = false;
 
+                // 優先使用 NFTI，若無則使用 ISS (比照 R 版本 mutually exclusive 邏輯)
                 if (r.Nfti.HasValue)
                 {
-                    majorTrauma |= (r.Nfti.Value == YesNo.Yes);
-                    minorTrauma |= (r.Nfti.Value == YesNo.No);
+                    majorTrauma = (r.Nfti.Value == YesNo.Yes);
+                    minorTrauma = (r.Nfti.Value == YesNo.No);
                 }
-
-                if (r.Iss.HasValue)
+                else if (r.Iss.HasValue)
                 {
-                    majorTrauma |= (r.Iss.Value > 15);
-                    minorTrauma |= (r.Iss.Value < 9);
+                    majorTrauma = (r.Iss.Value > 15);
+                    minorTrauma = (r.Iss.Value < 9);
                 }
-                else
-                {
-                    // No valid triage criteria, skip
-                    continue;
-                }
+                // 若兩者皆無，majorTrauma 與 minorTrauma 保持為 false
+                // 不再執行 continue，以確保記錄保留在 den10a/den10b 中
 
                 bool undertriage = isLimitedActivation && majorTrauma;
                 bool overtriage = isFullActivation && minorTrauma;

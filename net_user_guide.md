@@ -23,7 +23,8 @@
 
 *   **回傳結果**: `PatientRecord` (包含計算出的 `Ps` 屬性)。
 *   **參數說明**:
-    *   `input` (`PatientInput`): 包含病患的年齡、傷害類型、ISS 與 RTS。
+    *   `input` (`PatientInput`): 輸入病患資料。
+    *   **必填欄位**: `PatientInput` 物件的 `Age`, `InjuryType`, `Iss`, `Rts` 欄位為必填。
 *   **邊界值與限制**:
     *   `Age`: 必須 $\ge 0$。若 $\ge 55$ 歲會觸發 TRISS 的年齡加權。
     *   `Rts`: 必須在 $0$ 到 $7.8408$ 之間。
@@ -85,7 +86,8 @@ Console.WriteLine($"極端重傷存活機率: {result.Ps:P4}");
 
 *   **回傳結果**: `TraumaPerformanceResult`。
 *   **參數說明**:
-    *   `records` (`IEnumerable<PatientRecord>`): 包含 Ps 與實際存活結果 (`Outcome`) 的病患集合。
+    *   `records` (`IEnumerable<PatientRecord>`): 包含病患紀錄的集合。
+    *   **必填欄位**: `PatientRecord` 物件的 `Ps` 與 `Outcome` 欄位為必填。
     *   `minSampleSize` (`int`): 最小計算樣本數，預設為 $10$。
 *   **邊界值與限制**:
     *   樣本數小於 `minSampleSize` 時會拋出 `ArgumentException`。
@@ -148,7 +150,8 @@ Console.WriteLine($"高品質資料佔比 (Ps > 0.96): {result.MScore[0]:P2}");
 
 *   **回傳結果**: `RmmResult` (包含 Population RMM 與 Bootstrap RMM 及其信賴區間)。
 *   **參數說明**:
-    *   `records` (`IEnumerable<PatientRecord>`): 包含 Ps 與 Outcome 的病患集合。
+    *   `records` (`IEnumerable<PatientRecord>`): 包含病患紀錄的集合。
+    *   **必填欄位**: `PatientRecord` 物件的 `Ps` 與 `Outcome` 欄位為必填。
     *   `minSampleSize` (`int`): 同上。
     *   `nSamples` (`int`): 拔靴採樣次數，預設為 $100$。
     *   `seed` (`int?`): 隨機種子，用於確保測試結果可重現。
@@ -229,6 +232,7 @@ var (lower, upper) = StatHelper.CalculateWilsonInterval(20, 100, confLevel: 0.99
 
 #### 方法 1：CalculateIndicator1 (創傷小組反應時間)
 *   **用途**: 計算各級創傷小組在不同時限內的抵達率 (1a-1f)。
+*   **參數說明**: 需要傳入 `Indicator1Input` 物件集合，其 `UniqueIncidentId`, `ActivationLevel`, `ServiceType`, `Level`, `ResponseTime`, `ActivationProvider` 欄位為必填。
 *   **範例**:
     ```csharp
     var inputs = new List<Indicator1Input>
@@ -263,6 +267,7 @@ var (lower, upper) = StatHelper.CalculateWilsonInterval(20, 100, confLevel: 0.99
 
 #### 方法 2：CalculateIndicator2 (事件時間缺漏率)
 *   **用途**: 統計創傷事件發生時間缺漏的比例。
+*   **參數說明**: 需要傳入 `Indicator2Input` 物件集合，其 `UniqueIncidentId`, `Level`, `IncidentTime` 欄位為必填。
 *   **範例**:
     ```csharp
     var result = Indicators1to4.CalculateIndicator2(input);
@@ -271,6 +276,7 @@ var (lower, upper) = StatHelper.CalculateWilsonInterval(20, 100, confLevel: 0.99
 
 #### 方法 3：CalculateIndicator3 (存活機率紀錄率)
 *   **用途**: 檢查病患紀錄中是否包含 Ps 數值。
+*   **參數說明**: 需要傳入 `Indicator3Input` 物件集合，其 `UniqueIncidentId`, `Level`, `TraumaType`, `ProbabilityOfSurvival` 欄位為必填。
 *   **範例**:
     ```csharp
     var input = dataset.Select(d => new Indicator3Input { UniqueIncidentId = d.Id, ProbabilityOfSurvival = d.Ps });
@@ -279,6 +285,7 @@ var (lower, upper) = StatHelper.CalculateWilsonInterval(20, 100, confLevel: 0.99
 
 #### 方法 4：CalculateIndicator4 (死亡解剖與長期滯院)
 *   **用途**: 計算死亡病患的解剖率 (4a) 與非預期長期滯留 (4b)。
+*   **參數說明**: 需要傳入 `Indicator4Input` 物件集合，其 `UniqueIncidentId`, `Level`, `EdDisposition`, `EdLos`, `HospitalDisposition`, `HospitalLos`, `Autopsy` 欄位為必填。
 *   **範例**:
     ```csharp
     var result = Indicators1to4.CalculateIndicator4(input);
@@ -292,6 +299,7 @@ var (lower, upper) = StatHelper.CalculateWilsonInterval(20, 100, confLevel: 0.99
 
 #### 方法 1：CalculateIndicator5 (酒精與藥物篩檢)
 *   **用途**: 統計病患執行酒精濃度 (BAC) 與藥物篩檢 (Drug Screen) 的比例及陽性率。
+*   **參數說明**: 需要傳入 `Indicator5Input` 物件集合，其 `UniqueIncidentId`, `Level`, `BloodAlcoholContent`, `DrugScreen` 欄位為必填。
 *   **範例**:
     ```csharp
     var result = Indicators5to8.CalculateIndicator5(input);
@@ -300,6 +308,7 @@ var (lower, upper) = StatHelper.CalculateWilsonInterval(20, 100, confLevel: 0.99
 
 #### 方法 2：CalculateIndicator6 (低 GCS 延遲抵達)
 *   **用途**: 計算 GCS < 8 且受傷後超過 3 小時才抵達非適當設施的比例。
+*   **參數說明**: 需要傳入 `Indicator6Input` 物件集合，其 `UniqueIncidentId`, `Level`, `TransferOutIndicator`, `ReceivingIndicator`, `LowGcsIndicator`, `TimeFromInjuryToArrival` 欄位為必填。
 *   **範例**:
     ```csharp
     var result = Indicators5to8.CalculateIndicator6(input);
@@ -307,9 +316,11 @@ var (lower, upper) = StatHelper.CalculateWilsonInterval(20, 100, confLevel: 0.99
 
 #### 方法 3：CalculateIndicator7 (延遲獲得決定性照護)
 *   **用途**: 統計所有受傷後超過 3 小時抵達的個案比例。
+*   **參數說明**: 需要傳入 `Indicator7Input` 物件集合，其 `UniqueIncidentId`, `Level`, `TransferOutIndicator`, `TimeFromInjuryToArrival` 欄位為必填。
 
 #### 方法 4：CalculateIndicator8 (分層死亡率)
 *   **用途**: 計算全院及各風險等級 (Low/Moderate/High) 的病患死亡率。
+*   **參數說明**: 需要傳入 `Indicator8Input` 物件集合，其 `UniqueIncidentId`, `Level`, `MortalityIndicator`, `RiskGroup` 欄位為必填。
 *   **範例**:
     ```csharp
     var result = Indicators5to8.CalculateIndicator8(input);
@@ -322,7 +333,8 @@ var (lower, upper) = StatHelper.CalculateWilsonInterval(20, 100, confLevel: 0.99
 計算 SEQIC 第 9 至第 13 項指標，包含急診延遲、分流準確度與登錄品質。
 
 #### 方法 1：CalculateIndicator9 (急診處置延遲)
-*   **用途**: 依據轉院需求計算 ED 留置時間是否超過 2 或 3 小時 (9a-9f)。
+*   **用途**: 計算**轉出病患** (TransferOutIndicator = Yes) 的 ED 留置時間是否超過 2 或 3 小時 (9a-9f)；計算母體僅限有轉出的案件，一般到院/私人車輛等交通方式會被排除。
+*   **參數說明**: 需要傳入 `Indicator9Input` 物件集合，其 `UniqueIncidentId`, `Level`, `TransferOutIndicator`, `TransportMethod`, `TraumaTeamActivated`, `RiskGroup`, `EdLos`, `EdDecisionLos`, `EdDecisionDischargeLos` 欄位為必填。
 *   **範例**:
     ```csharp
     var result = Indicators9to13.CalculateIndicator9(input);
@@ -330,6 +342,7 @@ var (lower, upper) = StatHelper.CalculateWilsonInterval(20, 100, confLevel: 0.99
 
 #### 方法 2：CalculateIndicator10 (過度與不足分流)
 *   **用途**: 基於 ISS 或 NFTI 判斷是否存在 Under-triage (不足分流) 或 Over-triage (過度分流)。
+*   **參數說明**: 需要傳入 `Indicator10Input` 物件集合，其 `UniqueIncidentId`, `Level`, `TransferOutIndicator`, `ActivationLevel`, `Iss`, `Nfti` 欄位為必填。
 *   **範例**:
     ```csharp
     var inputs = new List<Indicator10Input> 
@@ -352,11 +365,13 @@ var (lower, upper) = StatHelper.CalculateWilsonInterval(20, 100, confLevel: 0.99
     Console.WriteLine($"不足分流率: {result.Indicator10A.Rate:P2}");
     ```
 
-#### 方法 3：CalculateIndicator11 (輕傷過度分流比例)
-*   **用途**: 統計 ISS < 9 且 ED 留置超過 24 小時的輕傷病患比例。
+#### 方法 3：CalculateIndicator11 (輕傷快速出院率)
+*   **用途**: 統計非轉出 (TransferOutIndicator = No) 且為接收案件 (ReceivingIndicator = Yes) 中，ISS < 9 且 ED 留置**未超過** 24 小時 (EdLos < 1440 分鐘) 的輕傷病患比例。
+*   **參數說明**: 需要傳入 `Indicator11Input` 物件集合，其 `UniqueIncidentId`, `Level`, `TransferOutIndicator`, `ReceivingIndicator`, `Iss`, `EdLos` 欄位為必填。
 
 #### 方法 4：CalculateIndicator12 (資料登錄及時性)
 *   **用途**: 檢查資料是否於 60 天內（可調參數）完成登錄。
+*   **參數說明**: 需要傳入 `Indicator12Input` 物件集合，其 `UniqueIncidentId`, `Level`, `FacilityId`, `DataEntryTime` 欄位為必填。
 *   **範例**:
     ```csharp
     var result = Indicators9to13.CalculateIndicator12(input, dataEntryStandard: 30);
@@ -364,21 +379,54 @@ var (lower, upper) = StatHelper.CalculateWilsonInterval(20, 100, confLevel: 0.99
 
 #### 方法 5：CalculateIndicator13 (資料有效性評分)
 *   **用途**: 統計資料有效性分數達到閥值 (預設 85) 的比例。
+*   **參數說明**: 需要傳入 `Indicator13Input` 物件集合，其 `UniqueIncidentId`, `Level`, `ValidityScore` 欄位為必填。
 
 ---
 
 ## 附錄：列舉與模型說明
 
-### 核心列舉 (Enums)
-*   **TraumaLevel**: `I`, `II`, `III`, `IV`, `V` (創傷等級)。
+### 1. 核心列舉 (Enums)
 *   **InjuryType**: `Blunt` (鈍傷), `Penetrating` (穿刺傷)。
-*   **CiMethod**: `None`, `Wilson`, `ClopperPearson` (信賴區間計算方法)。
-*   **RiskGroup**: `Low`, `Moderate`, `High` (風險分類)。
-*   **YesNo**: `Yes`, `No`, `Unknown` (布林擴充)。
+*   **TraumaLevel**: `Other`, `I`, `II`, `III`, `IV`, `V` (創傷中心等級)。
+*   **TraumaTeamActivationLevel**: `Other`, `Level1` (一級啟動), `Level2` (二級啟動), `Level3` (三級啟動)。
+*   **PhysicianServiceType**: 用於識別醫師與專科人員的類型，包含 `Other`, `SurgeryTrauma` (外科創傷), `EmergencyMedicine` (急診醫學), `FamilyPractice` (家庭醫學), `NursePractitioner` (專科護理師), `PhysicianAssistant` (醫師助理), `SurgerySeniorResident` (外科總醫師), `Hospitalist` (專職住院醫師), `InternalMedicine` (內科)。
+*   **TraumaType**: `Other`, `Blunt` (鈍傷), `Penetrating` (穿刺傷), `Burn` (燒燙傷)。
+*   **RiskGroup**: `Unknown`, `Low` (低風險), `Moderate` (中度風險), `High` (高風險)。
+*   **Disposition**: `Other`, `DeceasedExpired` (死亡), `Admitted` (住院), `Discharged` (出院), `Transferred` (轉院), `OperatingRoom` (進開刀房)。
+*   **YesNo**: `Unknown`, `Yes`, `No` (適用於缺乏資料或未知的布林擴充型態)。
+*   **CiMethod**: 信賴區間計算方法。包含 `None` (不計算), `Wilson` (適用於中大型樣本), `ClopperPearson` (適用於小型樣本，確切二項式法)。
 
-### 共通回傳模型 (SeqicRate)
-所有指標計算結果皆包含此類型：
-*   `Numerator`: 分子 (符合條件的人數)。
-*   `Denominator`: 分母 (總人數)。
-*   `Rate`: 比例 (Numerator / Denominator)。
-*   `LowerCi` / `UpperCi`: 95% 信賴區間下限與上限。
+### 2. 資料輸入模型 (Inputs & Records)
+*   **PatientInput**: 適用於 `ProbabilityOfSurvival`。包含基本創傷變數 `Age` (年齡), `InjuryType` (傷害類型), `Iss` (傷害嚴重度評分), `Rts` (修正創傷評分)。
+*   **PatientRecord**: 適用於績效分析 (`PerformanceCalculator` 與 `RmmCalculator`)。除上述基本變數外，另包含 `Ps` (存活機率) 與 `Outcome` (實際結果，1=存活/0=死亡)。
+*   **Indicator1Input**: SEQIC 指標 1 指定輸入。包含 `UniqueIncidentId`, `ActivationLevel`, `ServiceType`, `Level`, `ResponseTime`, `ActivationProvider`。
+*   **Indicator2Input**: SEQIC 指標 2 指定輸入。包含 `UniqueIncidentId`, `Level`, `IncidentTime`。
+*   **Indicator3Input**: SEQIC 指標 3 指定輸入。包含 `UniqueIncidentId`, `Level`, `TraumaType`, `ProbabilityOfSurvival`。
+*   **Indicator4Input**: SEQIC 指標 4 指定輸入。包含 `UniqueIncidentId`, `Level`, `EdDisposition`, `EdLos`, `HospitalDisposition`, `HospitalLos`, `Autopsy`。
+*   **Indicator5Input**: SEQIC 指標 5 指定輸入。包含 `UniqueIncidentId`, `Level`, `BloodAlcoholContent`, `DrugScreen`。
+*   **Indicator6Input**: SEQIC 指標 6 指定輸入。包含 `UniqueIncidentId`, `Level`, `TransferOutIndicator`, `ReceivingIndicator`, `LowGcsIndicator`, `TimeFromInjuryToArrival`。
+*   **Indicator7Input**: SEQIC 指標 7 指定輸入。包含 `UniqueIncidentId`, `Level`, `TransferOutIndicator`, `TimeFromInjuryToArrival`。
+*   **Indicator8Input**: SEQIC 指標 8 指定輸入。包含 `UniqueIncidentId`, `Level`, `MortalityIndicator`, `RiskGroup`。
+*   **Indicator9Input**: SEQIC 指標 9 指定輸入。包含 `UniqueIncidentId`, `Level`, `TransferOutIndicator`, `TransportMethod`, `TraumaTeamActivated`, `RiskGroup`, `EdLos`, `EdDecisionLos`, `EdDecisionDischargeLos`。
+*   **Indicator10Input**: SEQIC 指標 10 指定輸入。包含 `UniqueIncidentId`, `Level`, `TransferOutIndicator`, `ActivationLevel`, `Iss`, `Nfti`。
+*   **Indicator11Input**: SEQIC 指標 11 指定輸入。包含 `UniqueIncidentId`, `Level`, `TransferOutIndicator`, `ReceivingIndicator`, `Iss`, `EdLos`。（計算母體限定：TransferOutIndicator = No 且 ReceivingIndicator = Yes）
+*   **Indicator12Input**: SEQIC 指標 12 指定輸入。包含 `UniqueIncidentId`, `Level`, `FacilityId`, `DataEntryTime`。
+*   **Indicator13Input**: SEQIC 指標 13 指定輸入。包含 `UniqueIncidentId`, `Level`, `ValidityScore`。
+
+### 3. 計算結果模型 (Outputs)
+*   **SeqicRate**: SEQIC 共通比例與信賴區間模型。
+    *   `Numerator` (`int`): 分子 (符合條件的人數)。
+    *   `Denominator` (`int`): 分母 (總人數)。
+    *   `Rate` (`double?`): 比例 (Numerator / Denominator)。
+    *   `LowerCi` (`double?`), `UpperCi` (`double?`): 95% 信賴區間下限與上限。
+*   **RmmResult**: RMM 相對死亡率計算結果。
+    *   包含母體 (`PopulationRMM`, `PopulationRMM_LL`, `PopulationRMM_UL`) 及拔靴法 (`BootstrapRMM`, `BootstrapRMM_LL`, `BootstrapRMM_UL`) 評估值與寬度 (`CI`)。
+*   **TraumaPerformanceResult**: 傳統 W-Score 績效結果。
+    *   `WScore` (`double`), `ZScore` (`double`), `MScore` (`double[]`)。
+*   **Indicator1Result**: 包含子指標 `Indicator1A` 到 `Indicator1F` 的 `SeqicRate`。
+*   **Indicator4Result**: 包含子指標 `Indicator4A` 與 `Indicator4B` 的 `SeqicRate`。
+*   **Indicator5Result**: 包含子指標 `Indicator5A` 到 `Indicator5D` 的 `SeqicRate`。
+*   **Indicator8Result**: 包含 `Overall` (全部病患) 與 `RiskGroupScores` (以 `RiskGroup` 為 Key) 的 `SeqicRate` 組合。
+*   **Indicator9Result**: 包含急診處置延遲整體 (`Overall`) 及其依照啟動狀態 (`Activations`) 與風險層級 (`RiskGroups`) 往下群組的多重維度結果 (每組均包含 9a-9f 子指標 `Indicator9MultiResult`)。
+*   **Indicator10Result**: 包含 `Indicator10A`, `Indicator10B`, `Indicator10C` 的 `SeqicRate`。
+*   **其他 IndicatorResult (2, 3, 6, 7, 11, 12, 13)**: 此類結果類別皆僅有一個屬性，與該指標名稱同名 (例如 `Indicator2`)，型態為單一的 `SeqicRate` 物件。
